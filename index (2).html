@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<!--
+=====================================================================
+ CV WEBSITE - SHIVAM  (Professional version + cursor glow animation)
+
+ Is file mein 3 hisse hain:
+   1) style   -> design, rang, animation (CSS)   [shayad hi badalna pade]
+   2) body    -> page ka dhancha (HTML)          [kuch badalna nahi]
+   3) script  -> tumhara data (const CV = {...}) [YAHI SABSE ZAROORI HAI]
+
+ SABSE AASAN: sirf script ke andar "TUMHARA DATA" wala hissa badlo.
+
+ Comment (note) likhne ke tareeke:
+   CSS mein  -> /* note */
+   JS mein   -> // note
+   (HTML/JS mein hash wala comment nahi chalta)
+ DHYAN: is bade comment ke andar kabhi do dash aur bada-than wala
+ band karne ka nishan mat likhna, warna comment beech mein hi band ho jayega.
+=====================================================================
+-->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Shivam | DevOps Engineer – AWS, Linux, CI/CD</title>
+<meta name="description" content="Shivam, entry-level DevOps Engineer from Ghaziabad. Skills: AWS, Linux, Docker, Jenkins, Ansible, Terraform. View projects and CV.">
+<meta property="og:title" content="Shivam | DevOps Engineer">
+<meta property="og:description" content="AWS, Linux and CI/CD projects, internships and CV">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#070b14">
+
+<style>
+  /* ================= 1) DESIGN (CSS) ================= */
+
+  /* RANG YAHAN BADLO: --a1 aur --a2 = main teal/blue rang (glow bhi inhi se bante hain) */
+  :root{
+    --bg:#070b14; --card:rgba(255,255,255,.045); --card-b:rgba(255,255,255,.09);
+    --text:#e8eefb; --muted:#93a0bb; --a1:#2dd4bf; --a2:#3b82f6; --a3:#8b5cf6;
+    --tag:rgba(45,212,191,.12); --shadow:0 10px 40px rgba(0,0,0,.35);
+  }
+  /* LIGHT MODE (toggle button dabane par) */
+  :root[data-theme="light"]{
+    --bg:#f4f7fc; --card:rgba(255,255,255,.85); --card-b:rgba(20,30,60,.10);
+    --text:#14203a; --muted:#5b6985; --a1:#0d9488; --a2:#2563eb; --a3:#7c3aed;
+    --tag:rgba(13,148,136,.10); --shadow:0 10px 30px rgba(30,50,100,.10);
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth;scroll-padding-top:76px}
+  body{margin:0;background:var(--bg);color:var(--text);line-height:1.65;overflow-x:hidden;
+    font-family:"Inter","Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif}
+
+  /* ----- BACKGROUND ANIMATION: dheere dheere hilte rang ke gole ----- */
+  .bg{position:fixed;inset:0;z-index:-2;overflow:hidden;pointer-events:none}
+  .blob{position:absolute;border-radius:50%;filter:blur(90px);opacity:.28;animation:float 18s ease-in-out infinite}
+  .blob.b1{width:520px;height:520px;background:var(--a1);top:-120px;left:-120px}
+  .blob.b2{width:480px;height:480px;background:var(--a2);top:30%;right:-140px;animation-delay:-6s}
+  .blob.b3{width:420px;height:420px;background:var(--a3);bottom:-140px;left:25%;animation-delay:-12s}
+  @keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(60px,-50px) scale(1.12)}}
+  :root[data-theme="light"] .blob{opacity:.16}
+  /* halka dot grid */
+  .grid{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:.5;
+    background-image:radial-gradient(rgba(255,255,255,.07) 1px,transparent 1px);background-size:28px 28px;
+    -webkit-mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%);mask-image:radial-gradient(ellipse at 50% 30%,#000 30%,transparent 75%)}
+  :root[data-theme="light"] .grid{background-image:radial-gradient(rgba(20,30,60,.10) 1px,transparent 1px)}
+
+  /* ----- CURSOR GLOW: mouse ke peeche chalne wali roshni (video jaisa) ----- */
+  #glow{position:fixed;top:0;left:0;width:520px;height:520px;margin:-260px 0 0 -260px;border-radius:50%;z-index:-1;pointer-events:none;
+    background:radial-gradient(circle,rgba(59,130,246,.30) 0%,rgba(45,212,191,.16) 35%,transparent 68%);
+    filter:blur(10px);opacity:0;transition:opacity .4s;will-change:transform}
+  #glow.on{opacity:1}
+  :root[data-theme="light"] #glow{opacity:.0}
+  /* chhota cursor dot + ring */
+  #dot,#ring{position:fixed;top:0;left:0;pointer-events:none;z-index:99;border-radius:50%;opacity:0;transition:opacity .3s,width .2s,height .2s,margin .2s,background .2s}
+  #dot{width:7px;height:7px;margin:-3.5px 0 0 -3.5px;background:var(--a1)}
+  #ring{width:34px;height:34px;margin:-17px 0 0 -17px;border:1.5px solid var(--a1)}
+  #dot.on,#ring.on{opacity:1}
+  #ring.big{width:56px;height:56px;margin:-28px 0 0 -28px;background:rgba(45,212,191,.10)}
+  @media (hover:none){#glow,#dot,#ring{display:none}}   /* phone par ye nahi dikhte */
+
+  /* ----- NAVBAR ----- */
+  nav{position:fixed;top:0;left:0;right:0;z-index:50;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    background:color-mix(in srgb,var(--bg) 70%,transparent);border-bottom:1px solid var(--card-b)}
+  .nav{max-width:1000px;margin:0 auto;padding:12px 18px;display:flex;align-items:center;gap:14px}
+  .logo{font-weight:800;letter-spacing:.04em;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .links{display:flex;gap:4px;margin-left:auto;overflow-x:auto;scrollbar-width:none}
+  .links::-webkit-scrollbar{display:none}
+  .links a{color:var(--muted);text-decoration:none;font-size:13.5px;font-weight:600;padding:7px 12px;border-radius:8px;white-space:nowrap;transition:.2s}
+  .links a:hover{color:var(--text);background:var(--card)}
+  .tbtn{border:1px solid var(--card-b);background:var(--card);color:var(--text);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:15px}
+
+  /* ----- HERO (sabse upar) ----- */
+  .hero{max-width:1000px;margin:0 auto;padding:130px 18px 60px}
+  .badge{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--card-b);background:var(--card);padding:6px 14px;border-radius:999px;font-size:13px;color:var(--muted)}
+  .badge i{width:8px;height:8px;border-radius:50%;background:#4ade80;animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(74,222,128,.6)}70%{box-shadow:0 0 0 8px rgba(74,222,128,0)}100%{box-shadow:0 0 0 0 rgba(74,222,128,0)}}
+  .hero h1{margin:18px 0 6px;font-size:clamp(40px,8vw,76px);line-height:1.05;font-weight:800;letter-spacing:-.02em;
+    background:linear-gradient(90deg,var(--text),var(--a1) 55%,var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero .role{font-size:clamp(16px,2.4vw,22px);color:var(--muted);min-height:1.6em}
+  .caret{display:inline-block;width:2px;height:1.1em;background:var(--a1);margin-left:3px;vertical-align:-.15em;animation:blink 1s steps(2) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .hero p.sum{max-width:680px;color:var(--muted);margin:16px 0 0}
+  .btns{margin-top:26px;display:flex;gap:12px;flex-wrap:wrap}
+  .b{padding:12px 22px;border-radius:12px;font-weight:700;font-size:14px;text-decoration:none;cursor:pointer;border:1px solid var(--card-b);transition:.25s;display:inline-block}
+  .b.p{background:linear-gradient(90deg,var(--a1),var(--a2));color:#04111f;border:0;box-shadow:0 8px 24px rgba(45,212,191,.25)}
+  .b.s{background:var(--card);color:var(--text)}
+  .b:hover{transform:translateY(-2px)}
+  .stats{display:flex;flex-wrap:wrap;gap:14px;margin-top:38px}
+  .stat{border:1px solid var(--card-b);background:var(--card);border-radius:14px;padding:14px 20px;min-width:120px}
+  .stat b{display:block;font-size:26px;background:linear-gradient(90deg,var(--a1),var(--a2));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .stat span{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+
+  /* ----- SECTIONS ----- */
+  main{max-width:1000px;margin:0 auto;padding:0 18px 40px}
+  section{margin-top:64px}
+  h2{margin:0 0 22px;font-size:26px;display:flex;align-items:center;gap:12px}
+  h2::before{content:"";width:34px;height:4px;border-radius:4px;background:linear-gradient(90deg,var(--a1),var(--a2))}
+
+  /* ----- CARDS (mouse upar le jao to card ke andar spotlight chalti hai) ----- */
+  .card{position:relative;background:var(--card);border:1px solid var(--card-b);border-radius:16px;padding:22px 24px;box-shadow:var(--shadow);overflow:hidden;transition:transform .3s,border-color .3s}
+  .card::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;
+    background:radial-gradient(380px circle at var(--mx,50%) var(--my,50%),rgba(45,212,191,.16),transparent 60%)}
+  .card:hover{transform:translateY(-3px);border-color:rgba(45,212,191,.45)}
+  .card:hover::before{opacity:1}
+  .card h3{margin:0;font-size:17px;line-height:1.35}
+  .meta{color:var(--a1);font-size:13px;margin:4px 0 8px;font-weight:600}
+  .card ul{margin:10px 0 0;padding-left:18px} .card li{margin-bottom:6px;font-size:14.5px;color:var(--muted)}
+  .card li::marker{color:var(--a1)}
+  .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(420px,1fr));gap:18px}
+  @media (max-width:520px){.cols{grid-template-columns:1fr}}
+  .stack{display:grid;gap:18px}
+
+  /* ----- SKILLS ----- */
+  .grp{margin-bottom:16px} .grp:last-child{margin-bottom:0}
+  .gl{font-size:12px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+  .tags{display:flex;flex-wrap:wrap;gap:8px}
+  .tag{background:var(--tag);color:var(--a1);border:1px solid rgba(45,212,191,.25);padding:5px 13px;border-radius:999px;font-size:13px;font-weight:600;transition:.2s}
+  .tag:hover{background:var(--a1);color:#04111f;transform:translateY(-2px)}
+
+  /* ----- LIVE PROJECT LINK + DEMO LOGIN BOX ----- */
+  .plink{margin-top:14px;padding:9px 18px;font-size:13px}
+  .demo{margin-top:14px;border:1px dashed var(--a1);border-radius:12px;padding:10px 14px;font-size:14px;background:var(--tag)}
+  .demo code{background:rgba(0,0,0,.25);padding:2px 9px;border-radius:6px;font-weight:700;color:var(--a1)}
+  :root[data-theme="light"] .demo code{background:rgba(0,0,0,.07)}
+
+  /* ----- CONTACT ----- */
+  .contact{display:flex;flex-wrap:wrap;gap:12px}
+  .contact a,.contact span{color:var(--text);text-decoration:none;background:var(--card);border:1px solid var(--card-b);padding:11px 18px;border-radius:12px;font-size:14px;font-weight:600;transition:.25s}
+  .contact a:hover{border-color:var(--a1);color:var(--a1);transform:translateY(-2px)}
+  footer{text-align:center;color:var(--muted);font-size:13px;padding:30px 0 40px}
+
+  /* ----- SCROLL REVEAL: scroll karne par section neeche se upar aate hain ----- */
+  .rv{opacity:0;transform:translateY(26px);transition:opacity .7s ease,transform .7s ease}
+  .rv.in{opacity:1;transform:none}
+
+  /* jinhe animation pasand nahi (system setting) unke liye band */
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}html{scroll-behavior:auto}}
+
+  /* ----- PDF / PRINT: saaf safed CV banta hai, animation nahi ----- */
+  @media print{
+    :root{--bg:#fff;--text:#000;--muted:#333;--card:#fff;--card-b:#ddd;--a1:#0d6b62;--a2:#1d4ed8;--tag:#eee;--shadow:none}
+    .bg,.grid,#glow,#dot,#ring,nav,.btns,.plink,.badge,footer{display:none!important}
+    body{font-size:11.5px} .hero{padding:0 0 10px} .hero h1{background:none;color:#000;-webkit-text-fill-color:#000;font-size:34px}
+    .rv{opacity:1!important;transform:none!important} section{margin-top:18px}
+    .card{box-shadow:none;break-inside:avoid;padding:10px 0;border:0;border-bottom:1px solid #ddd;border-radius:0}
+    .cols{display:block} .tag{border-color:#ccc;color:#222} h2{font-size:17px}
+  }
+</style>
+</head>
+
+<body>
+<!-- ================= 2) PAGE KA DHANCHA (HTML) - ISE MAT BADLO ================= -->
+<div class="bg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+<div class="grid"></div>
+<div id="glow"></div><div id="ring"></div><div id="dot"></div>
+
+<nav><div class="nav">
+  <span class="logo" id="logo"></span>
+  <div class="links" id="links"></div>
+  <button class="tbtn" id="theme" title="Dark / Light">🌓</button>
+</div></nav>
+
+<header class="hero" id="top">
+  <span class="badge"><i></i> Open to entry-level DevOps roles</span>
+  <h1 id="name"></h1>
+  <div class="role"><span id="role"></span><span class="caret"></span></div>
+  <p class="sum" id="sum"></p>
+  <div class="btns">
+    <a class="b p" href="#projects">View Projects</a>
+    <a class="b s" href="#contact">Contact Me</a>
+    <button class="b s" onclick="window.print()">⬇ Download PDF</button>
+  </div>
+  <div class="stats" id="stats"></div>
+</header>
+
+<main id="main"></main>
+<footer id="foot"></footer>
+
+<script>
+  // ================= 3) TUMHARA DATA (SIRF YE HISSA BADLO) =================
+  //
+  // NOTE: Har cheez "double quotes" ke andar likho, aur har item ke baad comma lagao.
+  //       Comma ya quote chhoot gaya to page khali dikhega.
+  //
+  // KYA KAHAN HAI:
+  //   name / role / about  -> naam, job title, Career Objective
+  //   typing               -> role ke neeche jo shabd type hote rehte hain
+  //   skills               -> Technical Skills (groups mein)
+  //   experience           -> Internships
+  //   projects             -> sab projects (10 hain)
+  //   education            -> padhai aur certificates
+  //   hobbies              -> hobbies
+  //   contact              -> email, phone, LinkedIn, location
+  // ==========================================================================
+
+  const CV = {
+
+    // ---------- NAAM ----------
+    name: "SHIVAM",                                      // apna naam
+    logo: "SHIVAM.dev",                                  // navbar ke left ka chhota naam
+
+    // ---------- ROLE: ye line type hoti hai (ek ke baad ek badalti rehti hai) ----------
+    typing: ["DevOps Engineer", "AWS Cloud Practitioner", "Linux · Docker · Jenkins · Ansible", "CI/CD Pipeline Builder"],
+
+    // ---------- CAREER OBJECTIVE ----------
+    about: "Dedicated and detail-oriented DevOps Engineer with strong hands-on experience in AWS cloud services, Linux administration, automation, CI/CD pipelines, containerization, and monitoring tools. Seeking an entry-level DevOps role to build scalable, secure, and automated infrastructure while continuously improving deployment processes.",
+
+    // ---------- SKILLS: "Group ka naam": ["skill 1", "skill 2"] ----------
+    skills: {
+      "Operating Systems": ["Linux (Ubuntu, CentOS)", "Windows"],
+      "Cloud (AWS)": ["EC2","S3","IAM","VPC","Subnets","Route Tables","Internet Gateway","ALB","Auto Scaling","CloudWatch","Security Groups & NACL","AMI & Snapshots","RDS MySQL"],
+      "DevOps & Automation": ["Docker","Kubernetes","Ansible","Jenkins","Git & GitHub","Terraform","GitHub Actions"],
+      "Scripting": ["Bash"],
+      "Database": ["MySQL","AWS RDS","SQL","Database Administration"],
+      "Other": ["Infrastructure Automation","CI/CD Pipelines","Cloud Networking","Problem Solving"]
+    },
+
+    // ---------- INTERNSHIP / EXPERIENCE ----------
+    // title = job aur company, meta = chhoti line (duration), points = kya kaam kiya
+    experience: [
+      { title: "Networking Analyst (Intern) — Algowire",
+        meta: "Duration: 6 months",                       // yahan mahine/saal likh sakte ho
+        points: [
+          "Monitored and maintained network infrastructure to ensure high availability, performance, and security.",
+          "Assisted in configuring and troubleshooting LAN/WAN, routers, switches, and firewall settings.",
+          "Performed network traffic analysis and identified issues to support timely resolution.",
+          "Documented network configurations, incidents, and standard operating procedures for the team.",
+          "Collaborated with senior engineers on network monitoring and basic security hardening tasks."
+        ]},
+      { title: "AWS Support  — Devang Solaar Private Limited",
+        meta: "AWS Cloud Operations",                    // yahan duration jod sakte ho
+        points: [
+          "Monitored and managed AWS EC2 instances, including instance health, CPU utilization, connectivity, and resource usage.",
+          "Managed S3 buckets, EBS volumes, snapshots, permissions, and storage utilization.",
+          "Performed backup and restore operations using EBS snapshots and AWS Backup.",
+          "Monitored infrastructure using CloudWatch, CloudWatch Logs, alarms, and system/application logs.",
+          "Handled AWS security and access management using IAM, MFA, Security Groups, and least-privilege access.",
+          "Monitored billing with AWS Billing and Cost Explorer and identified unused resources.",
+          "Performed Linux/EC2 system updates and security patching, and verified services after updates.",
+          "Troubleshot EC2, SSH, networking, storage, CPU, memory, and application-related issues.",
+          "Worked with VPC, subnets, route tables, Internet Gateway, and Security Groups.",
+          "Maintained basic cloud infrastructure documentation, monitoring and backup status, and incident details."
+        ]}
+    ],
+
+    // ---------- PROJECTS: title, meta (optional), points, link (optional), demo (optional) ----------
+    projects: [
+      { title: "AWS EC2 Web Server Deployment (Nginx + Linux)", meta: "AWS EC2 · Nginx · Linux",
+        points: [
+          "Launched an EC2 instance on AWS using Amazon Linux 2 (t2.micro, Free Tier).",
+          "Connected to the server remotely via SSH using a .pem key pair from Windows PowerShell.",
+          "Installed and configured Nginx web server using Linux CLI commands (yum, systemctl).",
+          "Deployed a custom HTML page on a public IP, accessible from anywhere on the internet.",
+          "Configured EC2 Security Groups to allow HTTP (port 80) and SSH (port 22) traffic."
+        ]},
+      { title: "Static Website Hosting on AWS S3", meta: "AWS S3 · Bucket Policy",
+        points: [
+          "Created an S3 bucket and disabled Block all public access for public website hosting.",
+          "Enabled Static Website Hosting and configured index.html.",
+          "Configured a Bucket Policy (JSON) to allow public read access (s3:GetObject).",
+          "Website went live on a public S3 endpoint URL with no EC2 or server required."
+        ]},
+      { title: "Automated S3 Backup System with Bash & Cron Job", meta: "Bash · Cron · AWS CLI · S3",
+        points: [
+          "Installed and configured AWS CLI on EC2 for programmatic S3 access.",
+          "Wrote a Bash script that syncs files from EC2 to S3 with a dated folder structure.",
+          "Installed Cronie on Amazon Linux 2023 and scheduled the script as a daily cron job (2 AM).",
+          "Verified automated uploads to S3, simulating a real-world disaster recovery setup.",
+          "Stored backup logs in a separate log file for audit and monitoring."
+        ]},
+      { title: "CI/CD Pipeline using GitHub Actions & AWS EC2", meta: "GitHub Actions · EC2 · Node.js",
+        points: [
+          "Created a GitHub repository and structured the project with a Node.js application.",
+          "Wrote a GitHub Actions workflow (deploy.yml) to automate deployment on every code push.",
+          "Configured GitHub Secrets (EC2_HOST, EC2_USER, EC2_KEY) for secure SSH access.",
+          "Connected GitHub Actions to EC2 via SSH using appleboy/ssh-action for remote deployment.",
+          "Tested the full pipeline with Version 2.0 and 3.0, both deployed automatically in under 10 seconds.",
+          "Achieved zero-touch deployment: code push, GitHub Actions, then EC2."
+        ]},
+      { title: "AWS RDS MySQL Database + VPC Networking", meta: "RDS · VPC · MySQL · Security Groups",
+        points: [
+          "Created an RDS MySQL instance (db.t3.micro) inside a custom VPC with private subnet configuration.",
+          "Configured Security Groups to allow MySQL traffic on port 3306 between EC2 and RDS only.",
+          "Set up the EC2-to-RDS connection using AWS compute resource linking.",
+          "Installed MySQL client on EC2 and connected to RDS using the private endpoint.",
+          "Created a database (myappdb) and a users table, then inserted and queried data using SQL.",
+          "Demonstrated cloud architecture: EC2 (server), VPC (private network), RDS (managed database)."
+        ]},
+      { title: "AWS Infrastructure Deployment Project", meta: "EC2 · VPC · IAM · ALB · Auto Scaling",
+        points: [
+          "Designed and deployed AWS infrastructure using EC2, VPC, IAM, and ALB.",
+          "Configured security groups, Auto Scaling, and CloudWatch monitoring."
+        ]},
+      { title: "CI/CD Pipeline Automation – Jenkins & GitHub", meta: "Jenkins · Git · GitHub",
+        points: [
+          "Designed an automated CI/CD pipeline using Jenkins integrated with Git and GitHub.",
+          "Configured Jenkins to automatically pull source code from GitHub after each commit.",
+          "Reduced manual deployment effort by enabling automatic pipeline execution through Jenkins jobs."
+        ]},
+      { title: "End-to-End CI/CD – Git, GitHub, Jenkins, Ansible & Web Server", meta: "Jenkins · Ansible · Apache/Nginx",
+        points: [
+          "Designed an end-to-end CI/CD pipeline using Git, GitHub, Jenkins, and Ansible.",
+          "Automated application deployment on a Linux server using Ansible playbooks.",
+          "Configured and managed a web server (Apache/Nginx) to host the application."
+        ]},
+      { title: "Linux Server Administration & Security Hardening", meta: "Linux · SSH · Firewall",
+        points: [
+          "Managed users, permissions, packages, and services on Linux servers.",
+          "Used top, htop, and free for monitoring and optimized system performance.",
+          "Implemented key-based SSH authentication, disabled root login, and applied firewall rules."
+        ]},
+
+      // ===== LIVE DASHBOARD PROJECT (link + demo login yahan hai) =====
+      { title: "Live Data Dashboard with Login & Admin Panel",
+        meta: "Google Apps Script · Google Sheets · JavaScript · Netlify",
+        points: [
+          "Built a web dashboard that shows Google Sheet data live, auto-refreshing every 10 seconds.",
+          "Created a backend API with Google Apps Script returning JSON.",
+          "Implemented Admin/User login with salted SHA-256 password hashing, session tokens, and a temporary lock after 5 failed attempts.",
+          "Built an admin panel to create, disable, reset, and delete users.",
+          "Added search, sorting, pagination, CSV download, print/PDF, and a responsive dark-mode UI.",
+          "Deployed on Netlify for 24/7 availability."
+        ],
+        // >>> LIVE PROJECT KA LINK: url ke andar apna link daalo (quotes ke andar hi) <<<
+        link: { text: "View live project", url: "https://livedatasolaar.netlify.app" },
+        // >>> DEMO LOGIN: ye CV par sabko dikhega. Sirf "User" role wali ID likho, admin ki kabhi nahi <<<
+        // Box hatana ho to ye poori line delete karo (aur upar wali line ke aakhir ka comma bhi).
+        demo: { user: "admin", pass: "Admin@321" }
+      }
+    ],
+
+    // ---------- EDUCATION AUR CERTIFICATES ----------
+    // meta mein college ka naam aur saal likh do, jaise "XYZ University · 2022 – 2025"
+    education: [
+      { title: "Bachelor of Computer Applications (BCA)", meta: "" },
+      { title: "Certificate – DevOps Engineer", meta: "" },
+      { title: "Certificate – Computing and Peripherals", meta: "" }
+    ],
+
+    // ---------- HOBBIES ----------
+    hobbies: ["Playing Video Games","Learning New Technologies","Exploring Cloud Tools","Problem Solving","Traveling"],
+
+    // ---------- CONTACT (jo nahi dikhana use "" khali chhod do) ----------
+    contact: {
+      email: "shivamtanwar0090@gmail.com",
+      phone: "+91 7818038694",                                          // dikhana ho to likho: "+91 7818038694"
+      linkedin: "https://linkedin.com/in/shivam-singh-cloudengineer",
+      location: "Muradnagar, Ghaziabad (UP)"
+    }
+  };
+
+  // ==========================================================================
+  //  NEECHE KA CODE PAGE BANATA HAI AUR ANIMATION CHALATA HAI - ISE MAT BADLO
+  // ==========================================================================
+
+  const $=id=>document.getElementById(id);
+  // Special characters ko safe banata hai
+  const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+  const tags=a=>`<div class="tags">${a.map(s=>`<span class="tag">${esc(s)}</span>`).join("")}</div>`;
+
+  // Ek card banata hai (title, meta, points, link, demo box)
+  const card=i=>`<div class="card rv"><h3>${esc(i.title)}</h3>${i.meta?`<div class="meta">${esc(i.meta)}</div>`:""}
+    ${i.points&&i.points.length?"<ul>"+i.points.map(p=>`<li>${esc(p)}</li>`).join("")+"</ul>":""}
+    ${i.link?`<a class="b p plink" target="_blank" rel="noopener" href="${esc(i.link.url)}">${esc(i.link.text)} →</a>`:""}
+    ${i.demo?`<div class="demo">🔑 Demo login &nbsp; Username: <code>${esc(i.demo.user)}</code> &nbsp; Password: <code>${esc(i.demo.pass)}</code></div>`:""}</div>`;
+
+  // Ek section banata hai; content khali ho to section nahi dikhta
+  const sec=(id,title,body)=>body?`<section id="${id}"><h2 class="rv">${title}</h2>${body}</section>`:"";
+
+  // ---------- Upar ka hissa bharna ----------
+  document.title=CV.name.charAt(0)+CV.name.slice(1).toLowerCase()+" | DevOps Engineer – AWS, Linux, CI/CD";
+  $("name").textContent=CV.name; $("logo").textContent=CV.logo;
+  $("sum").textContent=CV.about.split(". ")[0]+".";
+  $("foot").textContent="© "+new Date().getFullYear()+" "+CV.name+" · Built with HTML, CSS & JavaScript";
+  $("stats").innerHTML=[
+    [CV.projects.length+"+","Projects"],[CV.experience.length,"Internships"],
+    [Object.values(CV.skills).flat().length+"+","Skills"]
+  ].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
+
+  // ---------- Navbar links ----------
+  const nav=[["about","About"],["skills","Skills"],["experience","Experience"],["projects","Projects"],["education","Education"],["contact","Contact"]];
+  $("links").innerHTML=nav.map(([id,t])=>`<a href="#${id}">${t}</a>`).join("");
+
+  // ---------- Contact ----------
+  const c=CV.contact, contact=[
+    c.email&&`<a href="mailto:${esc(c.email)}">✉ ${esc(c.email)}</a>`,
+    c.phone&&`<a href="tel:${esc(c.phone.replace(/\s/g,""))}">📞 ${esc(c.phone)}</a>`,
+    c.linkedin&&`<a href="${esc(c.linkedin)}" target="_blank" rel="noopener">in LinkedIn</a>`,
+    c.location&&`<span>📍 ${esc(c.location)}</span>`
+  ].filter(Boolean).join("");
+
+  // ---------- Saare sections page par lagana ----------
+  // Section ka heading badalna ho to sec("id","YAHAN",...) mein badlo.
+  // Kisi section ko hatana ho to uski poori line delete kar do.
+  $("main").innerHTML =
+    sec("about","About Me",`<div class="card rv"><p style="margin:0;color:var(--muted)">${esc(CV.about)}</p></div>`) +
+    sec("skills","Technical Skills",`<div class="card rv">${Object.entries(CV.skills).map(([k,v])=>`<div class="grp"><div class="gl">${esc(k)}</div>${tags(v)}</div>`).join("")}</div>`) +
+    sec("experience","Internship Experience",`<div class="stack">${CV.experience.map(card).join("")}</div>`) +
+    sec("projects","Projects",`<div class="cols">${CV.projects.map(card).join("")}</div>`) +
+    sec("education","Education & Certificates",`<div class="cols">${CV.education.map(card).join("")}</div>`) +
+    sec("hobbies","Hobbies",`<div class="card rv">${tags(CV.hobbies)}</div>`) +
+    sec("contact","Get In Touch",`<div class="contact rv">${contact}</div>`);
+
+  // ---------- Role ki typing animation ----------
+  (function(){
+    const el=$("role"), w=CV.typing; let wi=0,ci=0,del=false;
+    if(matchMedia("(prefers-reduced-motion:reduce)").matches){el.textContent=w[0];return}
+    (function tick(){
+      const word=w[wi];
+      el.textContent=word.slice(0,ci);
+      if(!del&&ci===word.length){del=true;return setTimeout(tick,1500)}
+      if(del&&ci===0){del=false;wi=(wi+1)%w.length}
+      ci+=del?-1:1; setTimeout(tick,del?35:70);
+    })();
+  })();
+
+  // ---------- Scroll par section upar aana ----------
+  const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}}),{threshold:.08});
+  document.querySelectorAll(".rv").forEach(el=>io.observe(el));
+
+  // ---------- CURSOR GLOW (video wala effect) ----------
+  // Mouse hilne par glow, dot aur ring dheere dheere peeche peeche chalte hain
+  (function(){
+    if(matchMedia("(hover:none)").matches) return;
+    const glow=$("glow"),dot=$("dot"),ring=$("ring");
+    let mx=innerWidth/2,my=innerHeight/2,gx=mx,gy=my,rx=mx,ry=my;
+    addEventListener("mousemove",e=>{
+      mx=e.clientX;my=e.clientY;
+      [glow,dot,ring].forEach(x=>x.classList.add("on"));
+      // card ke andar spotlight ki position
+      const cd=e.target.closest&&e.target.closest(".card");
+      if(cd){const r=cd.getBoundingClientRect();cd.style.setProperty("--mx",(e.clientX-r.left)+"px");cd.style.setProperty("--my",(e.clientY-r.top)+"px")}
+      // link ya button par ring bada ho jata hai
+      ring.classList.toggle("big",!!(e.target.closest&&e.target.closest("a,button,.tag,.card")));
+    });
+    document.addEventListener("mouseleave",()=>[glow,dot,ring].forEach(x=>x.classList.remove("on")));
+    (function loop(){
+      gx+=(mx-gx)*.08; gy+=(my-gy)*.08;   // .08 = glow kitni dheere chale (chhota number = zyada dheere)
+      rx+=(mx-rx)*.2;  ry+=(my-ry)*.2;    // ring ki speed
+      glow.style.transform=`translate(${gx}px,${gy}px)`;
+      ring.style.transform=`translate(${rx}px,${ry}px)`;
+      dot.style.transform=`translate(${mx}px,${my}px)`;
+      requestAnimationFrame(loop);
+    })();
+  })();
+
+  // ---------- Dark / Light toggle ----------
+  $("theme").onclick=()=>{
+    const r=document.documentElement;
+    r.dataset.theme=r.dataset.theme==="light"?"dark":"light";
+  };
+</script>
+</body>
+</html>
