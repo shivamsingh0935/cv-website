@@ -393,7 +393,7 @@
   $("sum").textContent=CV.about.split(". ")[0]+".";
   $("foot").textContent="© "+new Date().getFullYear()+" "+CV.name+" · Built with HTML, CSS & JavaScript";
   $("stats").innerHTML=[
-    [CV.projects.length+"+","Projects"],[CV.experience.length],
+    [CV.projects.length+"+","Projects"],[CV.experience.length,"Working Experience"],
     [Object.values(CV.skills).flat().length+"+","Skills"]
   ].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
 
