@@ -393,7 +393,7 @@
   $("sum").textContent=CV.about.split(". ")[0]+".";
   $("foot").textContent="© "+new Date().getFullYear()+" "+CV.name+" · Built with HTML, CSS & JavaScript";
   $("stats").innerHTML=[
-    [CV.projects.length+"+","Projects"],[CV.experience.length,"Internships"],
+    [CV.projects.length+"+","Projects"],[CV.experience.length],
     [Object.values(CV.skills).flat().length+"+","Skills"]
   ].map(([n,l])=>`<div class="stat"><b>${n}</b><span>${l}</span></div>`).join("");
 
@@ -415,7 +415,7 @@
   $("main").innerHTML =
     sec("about","About Me",`<div class="card rv"><p style="margin:0;color:var(--muted)">${esc(CV.about)}</p></div>`) +
     sec("skills","Technical Skills",`<div class="card rv">${Object.entries(CV.skills).map(([k,v])=>`<div class="grp"><div class="gl">${esc(k)}</div>${tags(v)}</div>`).join("")}</div>`) +
-    sec("experience","Internship Experience",`<div class="stack">${CV.experience.map(card).join("")}</div>`) +
+    sec("experience","Experience",`<div class="stack">${CV.experience.map(card).join("")}</div>`) +
     sec("projects","Projects",`<div class="cols">${CV.projects.map(card).join("")}</div>`) +
     sec("education","Education & Certificates",`<div class="cols">${CV.education.map(card).join("")}</div>`) +
     sec("hobbies","Hobbies",`<div class="card rv">${tags(CV.hobbies)}</div>`) +
